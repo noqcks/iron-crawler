@@ -10,3 +10,12 @@ From a starting URL, crawl all links on that URL and print a list of URLs visite
 - Ignores href attributes contained in tags from other domains (even subdomains)
 - Captures script src and link href tags for script and link tags respectively
 
+# Getting Started
+
+It's easy to get started!
+
+```
+iron-crawler $site
+```
+
+will crawl any site for you.

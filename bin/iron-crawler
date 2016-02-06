@@ -1,2 +1,16 @@
 #!/usr/bin/env ruby
 
+require 'iron-crawler'
+require 'terminal-announce'
+
+if ARGV.empty? || %w(-h --help help).include?(ARGV.first)
+  Announce.info 'Syntax: iron-crawler <url>'
+  abort
+end
+
+url = ARGV.first
+
+Announce.info "Crawling #{url}..."
+# url_list = crawler.
+# print url_list
+
