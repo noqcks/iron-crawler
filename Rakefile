@@ -13,12 +13,11 @@ require 'rake'
 
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
-  # gem is a Gem::Specification... see http://guides.rubygems.org/specification-reference/ for more options
   gem.name = "iron-crawler"
   gem.homepage = "http://github.com/noqcks/iron-crawler"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{A generic web crawler.}
+  gem.description = %Q{A generic web crawler that doesn't crawl outside URLs.}
   gem.email = "theodore.r.visser@gmail.com"
   gem.authors = ["Ben Visser"]
   # dependencies defined in Gemfile
