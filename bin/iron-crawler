@@ -1,6 +1,5 @@
-#!/usr/bin/env ruby
+# !/usr/bin/env ruby
 
-require 'iron-crawler'
 require 'terminal-announce'
 
 if ARGV.empty? || %w(-h --help help).include?(ARGV.first)
@@ -11,6 +10,35 @@ end
 url = ARGV.first
 
 Announce.info "Crawling #{url}..."
-# url_list = crawler.
-# print url_list
+agent = Mechanize.new
+agent.max_history = nil
+stack = agent.get(url).links
 
+while l = stack.pop
+  # make sure we really have a uri
+  next unless l.uri
+  host = l.uri.host
+
+  # skip unless host is relative or host is original domain
+  # TODO: are we accounting for subdomains?
+  next unless host.nil? or host == agent.history.first.uri.host
+
+  # skip if we already visited the site
+  begin
+    next if agent.visited? l.href
+  rescue Mechanize::UnsupportedSchemeError
+    puts "skipping #{l.uri}"
+    next
+  end
+
+  # crawl the URL
+  puts "crawling #{l.uri}"
+  begin
+    page = l.click
+    next unless Mechanize::Page === page
+    stack.push(*page.links)
+  rescue Mechanize::ResponseCodeError
+  end
+end
+
+p agent.history
