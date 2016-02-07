@@ -22,17 +22,11 @@ class Crawler < Mechanize
       puts "crawling #{link.uri}"
       begin
         page = link.click
-        next unless Mechanize::Page == page
+        next unless Mechanize::Page === page
         stack.push(*page.links)
       rescue Mechanize::ResponseCodeError
       end
     end
-    @mech.history
-  end
-
-
-  def absolute_uri(link)
-    return @mech.history.first.uri.merge link.uri
   end
 
 
@@ -42,7 +36,7 @@ class Crawler < Mechanize
   #
   def reject(link)
     # TODO: are we accounting for subdomains?
-    if not_same_domain?(link) || not_valid_uri?(link) || already_spidered?(link)
+    if not_valid_uri?(link) || not_same_domain?(link) || already_spidered?(link)
       return true
     else
       return false
@@ -56,7 +50,9 @@ class Crawler < Mechanize
   #
   def already_spidered?(link)
     begin
+      abs_url = @mech.history.first.uri.to_s.chomp('/') + link.href + '/'
       return true if @mech.visited? link.href
+      return true if @mech.visited? abs_url
     rescue Mechanize::UnsupportedSchemeError
       puts "skipping #{link.uri}"
       return true
@@ -69,7 +65,7 @@ class Crawler < Mechanize
   # @return [Booolean] true when valid URL.
   #
   def not_valid_uri?(link)
-    return true unless link.uri && !link.uri.scheme.nil?
+    return true unless link.uri && (/^http.+/ =~ link.uri.to_s || /\/.+/ =~ link.uri.to_s)
   end
 
 
