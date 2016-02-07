@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'terminal-announce'
+require 'mechanize'
 
 if ARGV.empty? || %w(-h --help help).include?(ARGV.first)
   Announce.info 'Syntax: iron-crawler <url>'
