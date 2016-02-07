@@ -24,17 +24,12 @@ class Crawler < Mechanize
   # @return [Boolean] true if we should reject URL.
   #
   def reject(link)
-    return true unless link.uri
-    host = link.uri.host
     # TODO: are we accounting for subdomains?
-    return true unless host.nil? || host == @mech.history.first.uri.host
-    begin
-      return true if @mech.visited? link.href
-    rescue Mechanize::UnsupportedSchemeError
-      puts "skipping #{link.uri}"
+    if not_same_domain?(link) || not_valid_uri?(link) || already_spidered?(link)
       return true
+    else
+      return false
     end
-    return false
   end
 
   # The loop we use to spider through all the URLs.
@@ -55,4 +50,23 @@ class Crawler < Mechanize
     return true
   end
 
+  def already_spidered?(link)
+    begin
+      return true if @mech.visited? link.href
+    rescue Mechanize::UnsupportedSchemeError
+      puts "skipping #{link.uri}"
+      return true
+    end
+  end
+
+  def not_valid_uri?(link)
+    return true unless link.uri
+  end
+
+  def not_same_domain?(link)
+    host = link.uri.host
+    return true unless host.nil? || host == @mech.history.first.uri.host
+  end
+
+  private :not_valid_uri?, :not_same_domain?, :already_spidered?
 end
