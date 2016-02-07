@@ -14,10 +14,18 @@ From a starting URL, crawl all links on that URL and print a list of URLs visite
 
 It's easy to get started!
 
+## Install
+
+```
+gem install iron-crawler
+```
+
+## Run
+
 ```
 iron-crawler <url>
 ```
 
-will crawl any site for you.
+The above command will crawl any site for you.
 
 
