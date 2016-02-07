@@ -7,6 +7,7 @@ class Crawler < Mechanize
     @mech = Mechanize.new
   end
 
+
   # Kicks off the spidering of a site.
   # @param [String] A simple URL string to crawl.
   # @return [Hash] A hash of URls crawled.
@@ -14,10 +15,10 @@ class Crawler < Mechanize
   def spiderize(url)
     @mech.max_history = nil
     stack = @mech.get(url).links
-    p stack.class
     crawl_loop(stack)
     @mech.history
   end
+
 
   # Whether we should reject to spider a URL.
   # @param [Mechanize::Page::Link] A mechanize page link.
@@ -31,6 +32,7 @@ class Crawler < Mechanize
       return false
     end
   end
+
 
   # The loop we use to spider through all the URLs.
   # @param [Array] An array of Mechanize::Page::Link to crawl.
@@ -50,6 +52,11 @@ class Crawler < Mechanize
     return true
   end
 
+
+  # Checks whether a link has already been crawled.
+  # @param [Mechanize::Page::Link] A mechanize page link.
+  # @return [Booolean] true when already spidered.
+  #
   def already_spidered?(link)
     begin
       return true if @mech.visited? link.href
@@ -59,10 +66,20 @@ class Crawler < Mechanize
     end
   end
 
+
+  # Checks whether a URL is able to be crawled.
+  # @param [Mechanize::Page::Link] A mechanize page link.
+  # @return [Booolean] true when valid URL.
+  #
   def not_valid_uri?(link)
     return true unless link.uri
   end
 
+
+  # Checks whether a URL is from the same domain.
+  # @param [Mechanize::Page::Link] A mechanize page link.
+  # @return [Booolean] true when not the same domain as original URL.
+  #
   def not_same_domain?(link)
     host = link.uri.host
     return true unless host.nil? || host == @mech.history.first.uri.host

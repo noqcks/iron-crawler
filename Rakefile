@@ -31,20 +31,55 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = true
 end
 
-desc "Code coverage detail"
-task :simplecov do
-  ENV['COVERAGE'] = "true"
-  Rake::Task['test'].execute
+require 'bundler/setup'
+require 'rubocop/rake_task'
+require 'reek/rake/task'
+require 'roodi_task'
+
+task default: [:audit]
+
+task audit: [:style, :complexity, :duplication, :design, :documentation]
+
+task style: [:rubocop]
+
+desc 'Enforce Style Conformance with RuboCop'
+RuboCop::RakeTask.new(:rubocop) do |task|
+  task.patterns = ['lib/**/*.rb']
+  task.fail_on_error = false
 end
 
-task :default => :test
+task complexity: [:flog]
 
-require 'rdoc/task'
-Rake::RDocTask.new do |rdoc|
-  version = File.exist?('VERSION') ? File.read('VERSION') : ""
+desc 'Assess Complexity with flog'
+task :flog do
+  sh 'flog lib/**/*.rb'
+end
 
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "iron-crawler #{version}"
-  rdoc.rdoc_files.include('README*')
-  rdoc.rdoc_files.include('lib/**/*.rb')
+task duplication: [:flay]
+
+desc 'Detect duplication with flay'
+task :flay do
+  sh 'flay lib/**/*.rb'
+end
+
+task design: [:reek]
+
+# desc 'Question design decisions with roodi'
+# RoodiTask.new do |task|
+#   task.patterns = ['lib/**/*.rb']
+# end
+
+desc 'Sniff out code smells with reek'
+Reek::Rake::Task.new(:reek) do |task|
+  task.fail_on_error = false
+end
+
+desc 'Identity volatile areas with churn'
+task :rework do
+  sh 'churn'
+end
+
+desc 'Critique documentation with inch'
+task :documentation do
+  sh 'inch'
 end
