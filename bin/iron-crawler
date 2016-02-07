@@ -14,10 +14,10 @@ agent = Mechanize.new
 agent.max_history = nil
 stack = agent.get(url).links
 
-while l = stack.pop
+while site = stack.pop
   # make sure we really have a uri
-  next unless l.uri
-  host = l.uri.host
+  next unless site.uri
+  host = site.uri.host
 
   # skip unless host is relative or host is original domain
   # TODO: are we accounting for subdomains?
@@ -25,16 +25,16 @@ while l = stack.pop
 
   # skip if we already visited the site
   begin
-    next if agent.visited? l.href
+    next if agent.visited? site.href
   rescue Mechanize::UnsupportedSchemeError
-    puts "skipping #{l.uri}"
+    puts "skipping #{site.uri}"
     next
   end
 
   # crawl the URL
-  puts "crawling #{l.uri}"
+  puts "crawling #{site.uri}"
   begin
-    page = l.click
+    page = site.click
     next unless Mechanize::Page === page
     stack.push(*page.links)
   rescue Mechanize::ResponseCodeError
