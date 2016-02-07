@@ -1,34 +1,38 @@
 require 'mechanize'
 
+# Enables the spidering of websites by utilizing Mechanize
 class Crawler < Mechanize
 
   def initialize
     @mech = Mechanize.new
   end
 
-  def spiderize url
 
+  def spiderize url
     @mech.max_history = nil
     stack = @mech.get(url).links
+    crawl_loop(stack)
+    @mech.history
+  end
 
-    while site = stack.pop
-      # make sure we really have a uri
-      next unless site.uri
-      host = site.uri.host
 
-      # skip unless host is relative or host is original domain
-      # TODO: are we accounting for subdomains?
-      next unless host.nil? or host == @mech.history.first.uri.host
+  def reject(site)
+    true unless site.uri
+    host = site.uri.host
+    # TODO: are we accounting for subdomains?
+    true unless host.nil? || host == @mech.history.first.uri.host
+    begin
+      true if @mech.visited? site.href
+    rescue Mechanize::UnsupportedSchemeError
+      puts "skipping #{site.uri}"
+      true
+    end
+  end
 
-      # skip if we already visited the site
-      begin
-        next if @mech.visited? site.href
-      rescue Mechanize::UnsupportedSchemeError
-        puts "skipping #{site.uri}"
-        next
-      end
 
-      # crawl the URL
+  def crawl_loop(stack)
+     while site = stack.pop
+      next if reject(site)
       puts "crawling #{site.uri}"
       begin
         page = site.click
@@ -37,8 +41,6 @@ class Crawler < Mechanize
       rescue Mechanize::ResponseCodeError
       end
     end
-
-    return @mech.history
   end
-end
 
+end

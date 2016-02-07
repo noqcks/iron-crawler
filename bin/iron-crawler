@@ -2,7 +2,6 @@
 
 require 'iron-crawler'
 require 'terminal-announce'
-# require 'mechanize'
 
 if ARGV.empty? || %w(-h --help help).include?(ARGV.first)
   Announce.info 'Syntax: iron-crawler <url>'
@@ -13,5 +12,4 @@ url = ARGV.first
 
 Announce.info "Crawling #{url}..."
 agent = Crawler.new
-agent.spiderize url
-
+p agent.spiderize(url)
