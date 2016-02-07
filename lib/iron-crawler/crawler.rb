@@ -8,7 +8,7 @@ class Crawler < Mechanize
   end
 
 
-  def spiderize url
+  def spiderize(url)
     @mech.max_history = nil
     stack = @mech.get(url).links
     crawl_loop(stack)
@@ -17,26 +17,26 @@ class Crawler < Mechanize
 
 
   def reject(site)
-    true unless site.uri
+    return true unless site.uri
     host = site.uri.host
     # TODO: are we accounting for subdomains?
-    true unless host.nil? || host == @mech.history.first.uri.host
+    return true unless host.nil? or host == @mech.history.first.uri.host
     begin
-      true if @mech.visited? site.href
+      return true if @mech.visited? site.href
     rescue Mechanize::UnsupportedSchemeError
       puts "skipping #{site.uri}"
-      true
+      return true
     end
   end
 
 
   def crawl_loop(stack)
-     while site = stack.pop
+    while site = stack.pop
       next if reject(site)
       puts "crawling #{site.uri}"
       begin
         page = site.click
-        next unless Mechanize::Page === page
+        next unless Mechanize::Page == page
         stack.push(*page.links)
       rescue Mechanize::ResponseCodeError
       end
