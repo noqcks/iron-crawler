@@ -15,7 +15,9 @@ From a starting URL, crawl all links on that URL and print a list of URLs visite
 It's easy to get started!
 
 ```
-iron-crawler $site
+iron-crawler <url>
 ```
 
 will crawl any site for you.
+
+
