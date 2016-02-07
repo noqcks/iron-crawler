@@ -1,7 +1,5 @@
 require 'mechanize'
 
-# TODO: fix duplicates from being created
-
 # Enables the spidering of websites by utilizing Mechanize
 class Crawler < Mechanize
 
