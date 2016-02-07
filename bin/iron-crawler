@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
 
+require 'iron-crawler'
 require 'terminal-announce'
-require 'mechanize'
+# require 'mechanize'
 
 if ARGV.empty? || %w(-h --help help).include?(ARGV.first)
   Announce.info 'Syntax: iron-crawler <url>'
@@ -11,35 +12,44 @@ end
 url = ARGV.first
 
 Announce.info "Crawling #{url}..."
-agent = Mechanize.new
-agent.max_history = nil
-stack = agent.get(url).links
+# agent = Mechanize.new
+# agent.max_history = nil
+# stack = agent.get(url).links
 
-while site = stack.pop
-  # make sure we really have a uri
-  next unless site.uri
-  host = site.uri.host
+agent = Crawler.new
+agent.spiderize(url)
 
-  # skip unless host is relative or host is original domain
-  # TODO: are we accounting for subdomains?
-  next unless host.nil? or host == agent.history.first.uri.host
 
-  # skip if we already visited the site
-  begin
-    next if agent.visited? site.href
-  rescue Mechanize::UnsupportedSchemeError
-    puts "skipping #{site.uri}"
-    next
-  end
+# # TODO:
+# # - concurrent
+# # - no # hrefs
+# # - link graph using neo4j
 
-  # crawl the URL
-  puts "crawling #{site.uri}"
-  begin
-    page = site.click
-    next unless Mechanize::Page === page
-    stack.push(*page.links)
-  rescue Mechanize::ResponseCodeError
-  end
-end
+# while site = stack.pop
+#   # make sure we really have a uri
+#   next unless site.uri
+#   host = site.uri.host
 
-p agent.history
+#   # skip unless host is relative or host is original domain
+#   # TODO: are we accounting for subdomains?
+#   next unless host.nil? or host == agent.history.first.uri.host
+
+#   # skip if we already visited the site
+#   begin
+#     next if agent.visited? site.href
+#   rescue Mechanize::UnsupportedSchemeError
+#     puts "skipping #{site.uri}"
+#     next
+#   end
+
+#   # crawl the URL
+#   puts "crawling #{site.uri}"
+#   begin
+#     page = site.click
+#     next unless Mechanize::Page === page
+#     stack.push(*page.links)
+#   rescue Mechanize::ResponseCodeError
+#   end
+# end
+
+# p agent.history
