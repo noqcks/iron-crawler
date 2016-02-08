@@ -15,7 +15,6 @@ class Crawler < Mechanize
   #
   def spiderize(url)
     page = @mech.get(url)
-
     stack = page.links
     stack.push(*src_links(page))
 
@@ -24,7 +23,7 @@ class Crawler < Mechanize
       puts "crawling #{link.uri}"
       begin
         page = link.click
-        next unless Mechanize::Page == page
+        next unless Mechanize::Page === page
         stack.push(*src_links(page))
         stack.push(*page.links)
       rescue Mechanize::ResponseCodeError
@@ -88,8 +87,7 @@ class Crawler < Mechanize
   # @return [Booolean] true when valid URL.
   #
   def not_valid_uri?(link)
-    valid_uri_regex = (/^http.+/ =~ link.uri.to_s || /\/.+/ =~ link.uri.to_s)
-    return true unless link.uri && valid_uri_regex
+    return true unless link.uri && (/^http.+/ =~ link.uri.to_s || /\/.+/ =~ link.uri.to_s)
   end
 
 
