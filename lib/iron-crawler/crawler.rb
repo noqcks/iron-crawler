@@ -23,7 +23,7 @@ class Crawler < Mechanize
       puts "crawling #{link.uri}"
       begin
         page = link.click
-        next unless Mechanize::Page === page
+        next unless Mechanize::Page == page
         stack.push(*src_links(page))
         stack.push(*page.links)
       rescue Mechanize::ResponseCodeError
@@ -40,7 +40,7 @@ class Crawler < Mechanize
   #
   def src_links(page)
     links = []
-    page.search("script").each do |element|
+    page.search('script').each do |element|
       next if element.attributes['src'].nil?
       doc = Nokogiri::HTML::Document.new
       node = Nokogiri::XML::Node.new('foo', doc)
@@ -87,7 +87,8 @@ class Crawler < Mechanize
   # @return [Booolean] true when valid URL.
   #
   def not_valid_uri?(link)
-    return true unless link.uri && (/^http.+/ =~ link.uri.to_s || /\/.+/ =~ link.uri.to_s)
+    valid_uri_regex = (/^http.+/ =~ link.uri.to_s || /\/.+/ =~ link.uri.to_s)
+    return true unless link.uri && valid_uri_regex
   end
 
 
