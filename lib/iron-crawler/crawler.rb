@@ -25,6 +25,7 @@ class Crawler < Mechanize
       rescue Mechanize::ResponseCodeError
       end
     end
+    return @mech.history
   end
 
 

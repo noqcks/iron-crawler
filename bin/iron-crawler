@@ -12,6 +12,5 @@ url = ARGV.first
 
 Announce.info "Crawling #{url}..."
 agent = Crawler.new
-agent.spiderize(url)
+puts agent.spiderize(url)
 
-puts agent.history
