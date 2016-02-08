@@ -14,18 +14,41 @@ class Crawler < Mechanize
   #
   def spiderize(url)
     @mech.max_history = nil
-    stack = @mech.get(url).links
+    page = @mech.get(url)
+    stack = page.links
+    stack.push(*src_links(page))
+
     while link = stack.pop
       next if reject(link)
       puts "crawling #{link.uri}"
       begin
         page = link.click
         next unless Mechanize::Page === page
+        stack.push(*src_links(page))
         stack.push(*page.links)
       rescue Mechanize::ResponseCodeError
       end
     end
     return @mech.history
+  end
+
+
+  # Since mechanize doesn't treat src elements as links, this will
+  # return all src links from a page.
+  # @param [Mechanize::Page] A mechanize page object.
+  # @return [Array] An array of created Mechanize::Page::Link objects.
+  #
+  def src_links(page)
+    links = []
+    page.search("script").each do |element|
+      next if element.attributes['src'].nil?
+      doc = Nokogiri::HTML::Document.new
+      node = Nokogiri::XML::Node.new('foo', doc)
+      node['href'] = element.attributes['src'].value
+      link = Mechanize::Page::Link.new(node, @mech, page)
+      links.push(link)
+    end
+    return links
   end
 
 
