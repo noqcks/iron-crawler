@@ -29,7 +29,8 @@ class Crawler < Mechanize
       rescue Mechanize::ResponseCodeError
       end
     end
-    return @mech.history
+
+    @mech.history.inspect
   end
 
 
@@ -57,7 +58,6 @@ class Crawler < Mechanize
   # @return [Boolean] true if we should reject URL.
   #
   def reject(link)
-    # TODO: are we accounting for subdomains?
     if not_valid_uri?(link) || not_same_domain?(link) || already_spidered?(link)
       return true
     else
