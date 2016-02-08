@@ -11,17 +11,17 @@ From a starting URL, it will crawl all links on that URL and print a list of URL
 - Captures script src and link href tags for script and link tags respectively
 - Outputs a list of visited URLs
 
-# Getting Started
+## Getting Started
 
 It's easy to get started!
 
-## Install
+### Install
 
 ```
 gem install iron-crawler
 ```
 
-## Run
+### Run
 
 ```
 iron-crawler <url>
