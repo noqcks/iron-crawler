@@ -71,14 +71,8 @@ class Crawler < Mechanize
   # @return [Booolean] true when already spidered.
   #
   def already_spidered?(link)
-    begin
-      abs_url = @mech.history.first.uri.to_s.chomp('/') + link.href + '/'
-      return true if @mech.visited? link.href
-      return true if @mech.visited? abs_url
-    rescue Mechanize::UnsupportedSchemeError
-      puts "skipping #{link.uri}"
-      return true
-    end
+    abs_url = @mech.history.first.uri.to_s.chomp('/') + link.href + '/'
+    return true if (@mech.visited? link.href) || (@mech.visited? abs_url)
   end
 
 
@@ -87,7 +81,11 @@ class Crawler < Mechanize
   # @return [Booolean] true when valid URL.
   #
   def not_valid_uri?(link)
-    return true unless link.uri && (/^http.+/ =~ link.uri.to_s || /\/.+/ =~ link.uri.to_s)
+    if link.uri
+      return true unless /^http.+/ =~ link.uri.to_s || /\/.+/ =~ link.uri.to_s
+    else
+      return true
+    end
   end
 
 
