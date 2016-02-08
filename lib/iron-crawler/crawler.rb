@@ -5,6 +5,7 @@ class Crawler < Mechanize
 
   def initialize
     @mech = Mechanize.new
+    @mech.max_history = nil
   end
 
 
@@ -13,8 +14,8 @@ class Crawler < Mechanize
   # @return [Hash] A hash of URls crawled.
   #
   def spiderize(url)
-    @mech.max_history = nil
     page = @mech.get(url)
+
     stack = page.links
     stack.push(*src_links(page))
 
