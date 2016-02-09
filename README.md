@@ -29,4 +29,10 @@ iron-crawler <url>
 
 The above command will crawl any site for you.
 
+## TODO
+
+- concurrency (will probably have to move away from mechanize)
+- test coverage with Rspec
+- set up CI pipeline with travis-ci to [automatically publish to rubygems](https://docs.travis-ci.com/user/deployment/rubygems)
+
 
